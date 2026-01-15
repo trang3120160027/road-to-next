@@ -8,10 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Ticket } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { ticketPath } from "@/paths";
 import { TICKETS_ICONS } from "../constants";
-import { Ticket } from "../types";
 
 type TicketItemProps = {
   ticket: Ticket;
