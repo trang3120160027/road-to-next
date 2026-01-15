@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TicketStatus {
+  OPEN
+  CLOSED
+  IN_PROGRESS
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  title     String
+  content   String @db.VarChar(1000)
+  status    TicketStatus @default(OPEN)
+  priority  TicketPriority @default(LOW)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
