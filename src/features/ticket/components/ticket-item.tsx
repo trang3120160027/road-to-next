@@ -1,4 +1,4 @@
-import { LucideSquareArrowOutUpRight } from "lucide-react";
+import { LucideSquareArrowOutUpRight, LucideTrash2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,7 @@ import {
 import { Ticket } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { ticketPath } from "@/paths";
+import { deleteTicket } from "../actions/delete-ticket";
 import { TICKETS_ICONS } from "../constants";
 
 type TicketItemProps = {
@@ -27,6 +28,14 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
     </Button>
   );
 
+  const deleteButton = (
+    <form action={deleteTicket.bind(null, ticket.id)}>
+      <Button variant="destructive" size="icon">
+        <LucideTrash2 />
+      </Button>
+    </form>
+  );
+
   return (
     <div
       className={cn("w-full flex gap-2", isDetail ? "max-w-lg" : "max-w-md")}
@@ -41,15 +50,13 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
         </CardHeader>
 
         <CardContent>
-          <p className={`${!isDetail && "truncate"}`}>
-            {ticket.content + ticket.content + ticket.content}
-          </p>
+          <p className={`${!isDetail && "truncate"}`}>{ticket.content}</p>
         </CardContent>
       </Card>
 
-      {isDetail ? null : (
-        <div className="flex flex-col gap-1">{detailButton}</div>
-      )}
+      <div className="flex flex-col gap-1">
+        {isDetail ? deleteButton : detailButton}
+      </div>
     </div>
   );
 };
