@@ -1,8 +1,13 @@
-import Form from "next/form";
+"use client";
+
+import { LucideLoaderCircle } from "lucide-react";
+import { useActionState } from "react";
+import { EMPTY_ACTION_STATE } from "@/components/form";
+import { Form } from "@/components/form/form";
 import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
@@ -16,23 +21,28 @@ type TicketUpsertFormProps = {
 };
 
 const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
-  //   const [formState, formAction, pending] = useActionState<
-  //     Parameters<typeof createTicket>
-  //   >(createTicket.bind(null), { values: { title: "" } });
+  const [actionState, action, pending] = useActionState(
+    upsertTicket.bind(null, ticket?.id),
+    EMPTY_ACTION_STATE,
+  );
 
   return (
-    <Form action={upsertTicket.bind(null, ticket?.id)}>
+    <Form action={action} actionState={actionState}>
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="title">Title</FieldLabel>
           <Input
             id="title"
             name="title"
-            defaultValue={ticket?.title}
+            defaultValue={actionState.values?.title ?? ticket?.title}
+            disabled={pending}
             placeholder="Enter the title of the ticket"
             autoComplete="off"
           />
-          <FieldDescription>Enter the title of the ticket</FieldDescription>
+          {/* <FieldDescription>Enter the title of the ticket</FieldDescription> */}
+          {actionState.errors?.title && (
+            <FieldError>{actionState.errors.title[0]}</FieldError>
+          )}
         </Field>
 
         <Field>
@@ -41,14 +51,23 @@ const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
           <Textarea
             id="content"
             name="content"
-            defaultValue={ticket?.content}
+            defaultValue={actionState.values?.content ?? ticket?.content}
+            disabled={pending}
             placeholder="Enter the content of the ticket"
             autoComplete="off"
           />
-          <FieldDescription>Enter the content of the ticket</FieldDescription>
+          {/* <FieldDescription>Enter the content of the ticket</FieldDescription> */}
+          {actionState.errors?.content && (
+            <FieldError>{actionState.errors.content[0]}</FieldError>
+          )}
         </Field>
         <Field>
-          <Button type="submit">Update Ticket</Button>
+          <Button type="submit" disabled={pending}>
+            {pending && (
+              <LucideLoaderCircle className="animate-spin mr-2 h-4 w-4" />
+            )}
+            {ticket ? "Update Ticket" : "Create Ticket"}
+          </Button>
         </Field>
       </FieldGroup>
     </Form>
