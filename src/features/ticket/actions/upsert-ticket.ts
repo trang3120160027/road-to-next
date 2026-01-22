@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { setCookieByKey } from "@/actions/cookies";
 import {
   ActionState,
   fromErrorToActionState,
@@ -36,6 +37,7 @@ const upsertTicket = async (
   revalidatePath(ticketsPath());
 
   if (id) {
+    await setCookieByKey("toastMessage", "Ticket updated successfully.");
     redirect(ticketPath(id));
   }
 
