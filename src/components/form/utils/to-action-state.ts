@@ -1,7 +1,7 @@
 import { ZodError } from "zod";
 
 export type ActionState<T> = {
-  values?: T;
+  values?: Partial<Record<keyof T, T[keyof T] | string>>;
   errors: null | Partial<Record<keyof T, string[]>>;
   message: string;
   success: boolean;
@@ -17,7 +17,7 @@ export const EMPTY_ACTION_STATE = {
 
 export const fromErrorToActionState = <T>(
   error: unknown,
-  values?: T,
+  values?: Partial<Record<keyof T, T[keyof T] | string>>,
 ): ActionState<T> => {
   if (error instanceof ZodError) {
     return {

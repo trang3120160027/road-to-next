@@ -9,12 +9,14 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Ticket } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { ticketEditPath, ticketPath } from "@/paths";
+import { toCurrencyFromCents } from "@/utils/currency";
 import { deleteTicket } from "../actions/delete-ticket";
 import { TICKETS_ICONS } from "../constants";
 
@@ -64,6 +66,13 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
         <CardContent>
           <p className={`${!isDetail && "truncate"}`}>{ticket.content}</p>
         </CardContent>
+
+        <CardFooter className="flex justify-between">
+          <p className="text-sm text-muted-foreground">{ticket.deadline}</p>
+          <p className="text-sm text-muted-foreground">
+            {toCurrencyFromCents(ticket.bounty)}
+          </p>
+        </CardFooter>
       </Card>
 
       <div className="flex flex-col gap-1">

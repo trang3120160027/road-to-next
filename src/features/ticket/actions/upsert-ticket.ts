@@ -10,6 +10,7 @@ import {
 } from "@/components/form";
 import prisma from "@/lib/prisma";
 import { ticketPath, ticketsPath } from "@/paths";
+import { toCents } from "@/utils/currency";
 import { UpsertTicketInput, upsertTicketSchema } from "../schemas";
 
 const upsertTicket = async (
@@ -17,10 +18,7 @@ const upsertTicket = async (
   _prevState: ActionState<UpsertTicketInput>,
   formData: FormData,
 ) => {
-  const values = {
-    title: formData.get("title") as string,
-    content: formData.get("content") as string,
-  };
+  const values = Object.fromEntries(formData);
 
   const result = upsertTicketSchema.safeParse(values);
 
@@ -28,10 +26,15 @@ const upsertTicket = async (
     return fromErrorToActionState<UpsertTicketInput>(result.error, values);
   }
 
+  const dbData = {
+    ...result.data,
+    bounty: toCents(result.data.bounty),
+  };
+
   await prisma.ticket.upsert({
     where: { id: id || "" },
-    update: result.data,
-    create: result.data,
+    update: dbData,
+    create: dbData,
   });
 
   revalidatePath(ticketsPath());

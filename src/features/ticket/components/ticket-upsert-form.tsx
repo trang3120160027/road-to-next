@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Ticket } from "@/generated/prisma/client";
+import { fromCents } from "@/utils/currency";
 import { upsertTicket } from "../actions/upsert-ticket";
 
 type TicketUpsertFormProps = {
@@ -61,6 +62,46 @@ const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
             <FieldError>{actionState.errors.content[0]}</FieldError>
           )}
         </Field>
+
+        <div className="flex w-full gap-2">
+          <Field className="w-1/2">
+            <FieldLabel htmlFor="deadline">Deadline</FieldLabel>
+            <Input
+              id="deadline"
+              name="deadline"
+              type="date"
+              defaultValue={actionState.values?.deadline ?? ticket?.deadline}
+              disabled={pending}
+              placeholder="Enter the deadline of the ticket"
+              autoComplete="off"
+            />
+            {actionState.errors?.deadline && (
+              <FieldError>{actionState.errors.deadline[0]}</FieldError>
+            )}
+          </Field>
+
+          <Field className="w-1/2">
+            <FieldLabel htmlFor="bounty">Bounty ($)</FieldLabel>
+            <Input
+              id="bounty"
+              name="bounty"
+              type="number"
+              step=".01"
+              min="0"
+              defaultValue={
+                actionState.values?.bounty ??
+                (ticket?.bounty ? fromCents(ticket.bounty) : "")
+              }
+              disabled={pending}
+              placeholder="Enter the bounty of the ticket"
+              autoComplete="off"
+            />
+            {actionState.errors?.bounty && (
+              <FieldError>{actionState.errors.bounty[0]}</FieldError>
+            )}
+          </Field>
+        </div>
+
         <Field>
           <Button type="submit" disabled={pending}>
             {pending && (
