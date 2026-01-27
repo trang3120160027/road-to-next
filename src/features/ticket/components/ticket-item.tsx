@@ -19,6 +19,7 @@ import { ticketEditPath, ticketPath } from "@/paths";
 import { toCurrencyFromCents } from "@/utils/currency";
 import { deleteTicket } from "../actions/delete-ticket";
 import { TICKETS_ICONS } from "../constants";
+import { TicketMoreMenu } from "./ticket-more-menu";
 
 type TicketItemProps = {
   ticket: Ticket;
@@ -50,6 +51,8 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
     </Button>
   );
 
+  const moreMenuButton = <TicketMoreMenu ticket={ticket} />;
+
   return (
     <div
       className={cn("w-full flex gap-2", isDetail ? "max-w-lg" : "max-w-md")}
@@ -80,6 +83,7 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
           <>
             {editButton}
             {deleteButton}
+            {moreMenuButton}
           </>
         ) : (
           <>

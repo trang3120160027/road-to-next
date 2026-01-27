@@ -31,11 +31,15 @@ const upsertTicket = async (
     bounty: toCents(result.data.bounty),
   };
 
-  await prisma.ticket.upsert({
-    where: { id: id || "" },
-    update: dbData,
-    create: dbData,
-  });
+  try {
+    await prisma.ticket.upsert({
+      where: { id: id || "" },
+      update: dbData,
+      create: dbData,
+    });
+  } catch (error) {
+    return fromErrorToActionState<UpsertTicketInput>(error, values);
+  }
 
   revalidatePath(ticketsPath());
 
