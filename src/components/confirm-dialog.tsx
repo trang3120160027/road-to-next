@@ -1,7 +1,11 @@
-import { cloneElement, useState } from "react";
+"use client";
+
+import { LucideLoader2 } from "lucide-react";
+import { cloneElement, useActionState, useState } from "react";
+import { ActionState, EMPTY_ACTION_STATE } from "./form";
+import { Form } from "./form/form";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -9,11 +13,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { Button } from "./ui/button";
 
 type UseConfirmDialogProps = {
   title: string;
   description: string;
-  action: () => Promise<void>;
+  action: () => Promise<ActionState<unknown>>;
   trigger: React.ReactElement;
 };
 
@@ -24,6 +29,10 @@ const useConfirmDialog = ({
   trigger,
 }: UseConfirmDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [actionState, formAction, pending] = useActionState(
+    action,
+    EMPTY_ACTION_STATE,
+  );
 
   const dialogTrigger = cloneElement(trigger, {
     onClick: () => setIsOpen((state) => !state),
@@ -39,11 +48,21 @@ const useConfirmDialog = ({
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <form action={action}>
-            <AlertDialogAction variant="destructive" type="submit">
-              Confirm
-            </AlertDialogAction>
-          </form>
+          <Form
+            action={formAction}
+            actionState={actionState}
+            onSuccess={() => setIsOpen(false)}
+          >
+            <Button variant="destructive" type="submit" disabled={pending}>
+              {pending && (
+                <div className="absolute flex items-center justify-center">
+                  <LucideLoader2 className="animate-spin h-4 w-4" />
+                </div>
+              )}
+
+              <span className={pending ? "opacity-0" : ""}>Confirm</span>
+            </Button>
+          </Form>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
