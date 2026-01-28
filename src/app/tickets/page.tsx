@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/card";
 import { TicketList } from "@/features/ticket/components/ticket-list";
 import { TicketUpsertForm } from "@/features/ticket/components/ticket-upsert-form";
+import { getBaseUrl } from "@/utils/url";
 
 const TicketsPage = () => {
+  console.log(getBaseUrl());
+
   return (
     <div className="flex-1 flex flex-col gap-8">
       <Heading
