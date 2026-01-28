@@ -4,6 +4,7 @@ import {
   LucideTrash2,
 } from "lucide-react";
 import Link from "next/link";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,11 +37,16 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
   );
 
   const deleteButton = (
-    <form action={deleteTicket.bind(null, ticket.id)}>
-      <Button variant="destructive" size="icon">
-        <LucideTrash2 />
-      </Button>
-    </form>
+    <ConfirmDialog
+      title="Delete Ticket"
+      description="Are you sure you want to delete this ticket? This action cannot be undone."
+      action={deleteTicket.bind(null, ticket.id)}
+      trigger={
+        <Button variant="destructive" size="icon">
+          <LucideTrash2 />
+        </Button>
+      }
+    />
   );
 
   const editButton = (

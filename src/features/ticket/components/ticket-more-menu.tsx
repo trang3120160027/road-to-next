@@ -35,15 +35,17 @@ const TicketMoreMenu = ({ ticket }: TicketMoreMenuProps) => {
   );
 
   const handleStatusChange = async (newStatus: string) => {
+    const toastId = toast.loading("Updating ticket status...");
+
     const result = await updateTicketStatus(
       ticket.id,
       newStatus as TicketStatus,
     );
 
-    if (!result.success) {
-      toast.error(result.message);
+    if (result.success) {
+      toast.success(result.message, { id: toastId });
     } else {
-      toast.success(result.message);
+      toast.error(result.message, { id: toastId });
     }
   };
 
