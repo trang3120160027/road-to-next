@@ -1,10 +1,5 @@
-import {
-  LucidePen,
-  LucideSquareArrowOutUpRight,
-  LucideTrash2,
-} from "lucide-react";
+import { LucidePen, LucideSquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,7 +13,6 @@ import { Ticket } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { ticketEditPath, ticketPath } from "@/paths";
 import { toCurrencyFromCents } from "@/utils/currency";
-import { deleteTicket } from "../actions/delete-ticket";
 import { TICKETS_ICONS } from "../constants";
 import { TicketMoreMenu } from "./ticket-more-menu";
 
@@ -34,19 +28,6 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
         <LucideSquareArrowOutUpRight />
       </Link>
     </Button>
-  );
-
-  const deleteButton = (
-    <ConfirmDialog
-      title="Delete Ticket"
-      description="Are you sure you want to delete this ticket? This action cannot be undone."
-      action={deleteTicket.bind(null, ticket.id)}
-      trigger={
-        <Button variant="destructive" size="icon">
-          <LucideTrash2 />
-        </Button>
-      }
-    />
   );
 
   const editButton = (
@@ -88,7 +69,6 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
         {isDetail ? (
           <>
             {editButton}
-            {deleteButton}
             {moreMenuButton}
           </>
         ) : (

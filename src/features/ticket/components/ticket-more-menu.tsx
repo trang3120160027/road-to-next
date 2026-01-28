@@ -2,6 +2,7 @@
 
 import { LucideMoreVertical, LucideTrash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Ticket, TicketStatus } from "@/generated/prisma/client";
+import { deleteTicket } from "../actions/delete-ticket";
 import { updateTicketStatus } from "../actions/update-ticket-status";
 import { TICKET_STATUS_LABELS } from "../constants";
 
@@ -21,18 +23,26 @@ type TicketMoreMenuProps = {
 };
 
 const TicketMoreMenu = ({ ticket }: TicketMoreMenuProps) => {
-  const trigger = (
+  const [dialogTrigger, confirmDialog] = useConfirmDialog({
+    title: "Delete Ticket",
+    description:
+      "Are you sure you want to delete this ticket? This action cannot be undone.",
+    action: deleteTicket.bind(null, ticket.id),
+    trigger: (
+      <div className="flex items-center gap-2 w-full">
+        <LucideTrash2 className="h-4 w-4 text-destructive" />
+        <span className="text-destructive">Delete</span>
+      </div>
+    ),
+  });
+
+  const moreMenuTrigger = (
     <Button variant="outline" size="icon">
       <LucideMoreVertical />
     </Button>
   );
 
-  const deleteButton = (
-    <DropdownMenuItem>
-      <LucideTrash2 className="h-4 w-4 text-destructive" />
-      <span className="text-destructive">Delete</span>
-    </DropdownMenuItem>
-  );
+  const deleteButton = <DropdownMenuItem>{dialogTrigger}</DropdownMenuItem>;
 
   const handleStatusChange = async (newStatus: string) => {
     const toastId = toast.loading("Updating ticket status...");
@@ -63,14 +73,18 @@ const TicketMoreMenu = ({ ticket }: TicketMoreMenuProps) => {
   );
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {ticketStatusRadioGroup}
-        <DropdownMenuSeparator />
-        {deleteButton}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      {confirmDialog}
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>{moreMenuTrigger}</DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {ticketStatusRadioGroup}
+          <DropdownMenuSeparator />
+          {deleteButton}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 };
 
