@@ -1,21 +1,22 @@
+import { FormEventHandler } from "react";
 import { toast } from "sonner";
 import { ActionState } from "@/components/form";
 import { useActionFeedback } from "./hooks/use-action-feedback";
 
 type FormProps<T> = {
   actionState: ActionState<T>;
-  action: (payload: FormData) => void;
   children: React.ReactNode;
   onSuccess?: (actionState: ActionState<T>) => void;
   onError?: (actionState: ActionState<T>) => void;
+  onSubmit: FormEventHandler<HTMLFormElement>;
 };
 
 const Form = <T,>({
   actionState,
-  action,
   children,
   onSuccess,
   onError,
+  onSubmit,
 }: FormProps<T>) => {
   useActionFeedback({
     actionState,
@@ -35,7 +36,7 @@ const Form = <T,>({
     },
   });
 
-  return <form action={action}>{children}</form>;
+  return <form onSubmit={onSubmit}>{children}</form>;
 };
 
 export { Form };
