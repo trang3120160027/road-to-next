@@ -8,7 +8,8 @@ type FormProps<T> = {
   children: React.ReactNode;
   onSuccess?: (actionState: ActionState<T>) => void;
   onError?: (actionState: ActionState<T>) => void;
-  onSubmit: FormEventHandler<HTMLFormElement>;
+  onSubmit?: FormEventHandler<HTMLFormElement>;
+  action?: (payload: FormData) => void;
 };
 
 const Form = <T,>({
@@ -17,6 +18,7 @@ const Form = <T,>({
   onSuccess,
   onError,
   onSubmit,
+  action,
 }: FormProps<T>) => {
   useActionFeedback({
     actionState,
@@ -36,7 +38,11 @@ const Form = <T,>({
     },
   });
 
-  return <form onSubmit={onSubmit}>{children}</form>;
+  return (
+    <form action={action} onSubmit={onSubmit}>
+      {children}
+    </form>
+  );
 };
 
 export { Form };
