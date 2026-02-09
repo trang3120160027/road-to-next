@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Prisma, PrismaClient } from "@/generated/prisma/client";
+import { auth } from "@/lib/auth";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -8,46 +9,16 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-const users: Prisma.UserCreateManyInput[] = [
+const users = [
   {
-    id: "admin-user-id",
     email: "admin@admin.com",
-    name: "Admin User",
+    name: "admin",
+    password: "12345678",
   },
   {
-    id: "user-1-id",
     email: "na851998@gmail.com",
-    name: "Anh Nguyen",
-  },
-];
-
-const tickets: Prisma.TicketCreateManyInput[] = [
-  {
-    title: "Bug in login feature",
-    content: "Users are unable to log in using their credentials.",
-    status: "OPEN",
-    priority: "HIGH",
-    deadline: new Date().toISOString().split("T")[0],
-    bounty: 100,
-    userId: users[0].id,
-  },
-  {
-    title: "UI enhancement for dashboard",
-    content: "Improve the layout and design of the user dashboard.",
-    status: "IN_PROGRESS",
-    priority: "MEDIUM",
-    deadline: new Date().toISOString().split("T")[0],
-    bounty: 50,
-    userId: users[1].id,
-  },
-  {
-    title: "Add multi-language support",
-    content: "Implement support for multiple languages in the application.",
-    status: "CLOSED",
-    priority: "LOW",
-    deadline: new Date().toISOString().split("T")[0],
-    bounty: 75,
-    userId: users[0].id,
+    name: "Nam Anh",
+    password: "12345678",
   },
 ];
 
@@ -57,13 +28,58 @@ export async function seed() {
 
   await prisma.user.deleteMany();
 
-  await prisma.user.createMany({
-    data: users,
-  });
+  const createdUsers = [];
 
-  await prisma.ticket.createMany({
-    data: tickets,
-  });
+  for (const user of users) {
+    const result = await auth.api.signUpEmail({
+      body: {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      },
+    });
+
+    if (result?.user) {
+      createdUsers.push(result.user);
+    }
+  }
+
+  if (createdUsers.length === users.length) {
+    const tickets: Prisma.TicketCreateManyInput[] = [
+      {
+        title: "Bug in login feature",
+        content: "Users are unable to log in using their credentials.",
+        status: "OPEN",
+        priority: "HIGH",
+        deadline: new Date().toISOString().split("T")[0],
+        bounty: 100,
+        userId: createdUsers[0].id,
+      },
+      {
+        title: "UI enhancement for dashboard",
+        content: "Improve the layout and design of the user dashboard.",
+        status: "IN_PROGRESS",
+        priority: "MEDIUM",
+        deadline: new Date().toISOString().split("T")[0],
+        bounty: 50,
+        userId: createdUsers[1].id,
+      },
+      {
+        title: "Add multi-language support",
+        content: "Implement support for multiple languages in the application.",
+        status: "CLOSED",
+        priority: "LOW",
+        deadline: new Date().toISOString().split("T")[0],
+        bounty: 75,
+        userId: createdUsers[0].id,
+      },
+    ];
+
+    await prisma.ticket.createMany({
+      data: tickets,
+    });
+  }
+
   const t1 = performance.now();
   console.log(`Seeding finished in ${(t1 - t0).toFixed(2)} ms`);
 }
