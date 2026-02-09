@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { setCookieByKey } from "@/actions/cookies";
 import {
@@ -9,9 +8,9 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form";
-import { auth } from "@/lib/auth";
+import { getSessionOrRedirect } from "@/features/auth/queries/get-session-or-redirect";
 import prisma from "@/lib/prisma";
-import { signInPath, ticketPath, ticketsPath } from "@/paths";
+import { ticketPath, ticketsPath } from "@/paths";
 import { toCents } from "@/utils/currency";
 import { UpsertTicketInput, upsertTicketSchema } from "../schemas";
 
@@ -20,11 +19,7 @@ const upsertTicket = async (
   _prevState: ActionState<UpsertTicketInput>,
   formData: FormData,
 ) => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session) {
-    redirect(signInPath());
-  }
+  const session = await getSessionOrRedirect();
 
   const values = Object.fromEntries(formData);
 

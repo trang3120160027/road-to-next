@@ -4,18 +4,13 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { setCookieByKey } from "@/actions/cookies";
 import { auth } from "@/lib/auth";
-import { signInPath, ticketsPath } from "@/paths";
+import { ticketsPath } from "@/paths";
+import { getSessionOrRedirect } from "../queries/get-session-or-redirect";
 
 const signOut = async () => {
   const headersList = await headers();
 
-  const session = await auth.api.getSession({
-    headers: headersList,
-  });
-
-  if (!session) {
-    redirect(signInPath());
-  }
+  await getSessionOrRedirect();
 
   try {
     await auth.api.signOut({
