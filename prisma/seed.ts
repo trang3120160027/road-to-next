@@ -8,7 +8,20 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-const tickets: Prisma.TicketCreateInput[] = [
+const users: Prisma.UserCreateManyInput[] = [
+  {
+    id: "admin-user-id",
+    email: "admin@admin.com",
+    name: "Admin User",
+  },
+  {
+    id: "user-1-id",
+    email: "na851998@gmail.com",
+    name: "Anh Nguyen",
+  },
+];
+
+const tickets: Prisma.TicketCreateManyInput[] = [
   {
     title: "Bug in login feature",
     content: "Users are unable to log in using their credentials.",
@@ -16,6 +29,7 @@ const tickets: Prisma.TicketCreateInput[] = [
     priority: "HIGH",
     deadline: new Date().toISOString().split("T")[0],
     bounty: 100,
+    userId: users[0].id,
   },
   {
     title: "UI enhancement for dashboard",
@@ -24,6 +38,7 @@ const tickets: Prisma.TicketCreateInput[] = [
     priority: "MEDIUM",
     deadline: new Date().toISOString().split("T")[0],
     bounty: 50,
+    userId: users[1].id,
   },
   {
     title: "Add multi-language support",
@@ -32,6 +47,7 @@ const tickets: Prisma.TicketCreateInput[] = [
     priority: "LOW",
     deadline: new Date().toISOString().split("T")[0],
     bounty: 75,
+    userId: users[0].id,
   },
 ];
 
@@ -39,7 +55,11 @@ export async function seed() {
   const t0 = performance.now();
   console.log("Start seeding...");
 
-  await prisma.ticket.deleteMany({});
+  await prisma.user.deleteMany();
+
+  await prisma.user.createMany({
+    data: users,
+  });
 
   await prisma.ticket.createMany({
     data: tickets,
