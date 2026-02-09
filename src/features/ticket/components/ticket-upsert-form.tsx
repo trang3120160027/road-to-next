@@ -1,10 +1,11 @@
 "use client";
 
-import { LucideLoaderCircle } from "lucide-react";
-import { useActionState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { startTransition, useActionState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { EMPTY_ACTION_STATE } from "@/components/form";
 import { Form } from "@/components/form/form";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/form/submit-button";
 import {
   Field,
   FieldError,
@@ -16,34 +17,77 @@ import { Textarea } from "@/components/ui/textarea";
 import { Ticket } from "@/generated/prisma/client";
 import { fromCents } from "@/utils/currency";
 import { upsertTicket } from "../actions/upsert-ticket";
+import { UpsertTicketInput, upsertTicketSchema } from "../schemas";
 
 type TicketUpsertFormProps = {
   ticket?: Ticket;
 };
 
 const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
-  const [actionState, action, pending] = useActionState(
+  const [actionState, formAction, pending] = useActionState(
     upsertTicket.bind(null, ticket?.id),
     EMPTY_ACTION_STATE,
   );
 
+  const {
+    register,
+    handleSubmit,
+    setError,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(upsertTicketSchema),
+    defaultValues: {
+      title: ticket?.title || "",
+      content: ticket?.content || "",
+      deadline: ticket?.deadline || "",
+      bounty: ticket?.bounty ? fromCents(ticket.bounty) : "",
+    },
+  });
+
+  // Sync server-side validation errors to react-hook-form
+  useEffect(() => {
+    if (actionState.errors) {
+      Object.entries(actionState.errors).forEach(([key, messages]) => {
+        setError(key as keyof UpsertTicketInput, {
+          type: "server",
+          message: messages[0],
+        });
+      });
+    }
+  }, [actionState.errors, setError]);
+
+  // Reset form on successful submission
+  useEffect(() => {
+    if (actionState.success) {
+      reset();
+    }
+  }, [actionState.success, reset]);
+
+  const onSubmit = (data: UpsertTicketInput) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value as string);
+    });
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
+
   return (
-    <Form action={action} actionState={actionState}>
+    <Form actionState={actionState} onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="title">Title</FieldLabel>
           <Input
             id="title"
-            name="title"
-            defaultValue={actionState.values?.title ?? ticket?.title}
+            {...register("title")}
             disabled={pending}
             placeholder="Enter the title of the ticket"
             autoComplete="off"
           />
           {/* <FieldDescription>Enter the title of the ticket</FieldDescription> */}
-          {actionState.errors?.title && (
-            <FieldError>{actionState.errors.title[0]}</FieldError>
-          )}
+          {errors.title && <FieldError>{errors.title.message}</FieldError>}
         </Field>
 
         <Field>
@@ -51,16 +95,13 @@ const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
           {/* <InputGroupTextarea id="content" name="content" defaultValue={""} placeholder="Enter the content of the ticket" /> */}
           <Textarea
             id="content"
-            name="content"
-            defaultValue={actionState.values?.content ?? ticket?.content}
+            {...register("content")}
             disabled={pending}
             placeholder="Enter the content of the ticket"
             autoComplete="off"
           />
           {/* <FieldDescription>Enter the content of the ticket</FieldDescription> */}
-          {actionState.errors?.content && (
-            <FieldError>{actionState.errors.content[0]}</FieldError>
-          )}
+          {errors.content && <FieldError>{errors.content.message}</FieldError>}
         </Field>
 
         <div className="flex w-full gap-2">
@@ -68,15 +109,14 @@ const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
             <FieldLabel htmlFor="deadline">Deadline</FieldLabel>
             <Input
               id="deadline"
-              name="deadline"
               type="date"
-              defaultValue={actionState.values?.deadline ?? ticket?.deadline}
+              {...register("deadline")}
               disabled={pending}
               placeholder="Enter the deadline of the ticket"
               autoComplete="off"
             />
-            {actionState.errors?.deadline && (
-              <FieldError>{actionState.errors.deadline[0]}</FieldError>
+            {errors.deadline && (
+              <FieldError>{errors.deadline.message}</FieldError>
             )}
           </Field>
 
@@ -84,31 +124,23 @@ const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
             <FieldLabel htmlFor="bounty">Bounty ($)</FieldLabel>
             <Input
               id="bounty"
-              name="bounty"
               type="number"
               step=".01"
               min="0"
-              defaultValue={
-                actionState.values?.bounty ??
-                (ticket?.bounty ? fromCents(ticket.bounty) : "")
-              }
+              {...register("bounty")}
               disabled={pending}
               placeholder="Enter the bounty of the ticket"
               autoComplete="off"
             />
-            {actionState.errors?.bounty && (
-              <FieldError>{actionState.errors.bounty[0]}</FieldError>
-            )}
+            {errors.bounty && <FieldError>{errors.bounty.message}</FieldError>}
           </Field>
         </div>
 
         <Field>
-          <Button type="submit" disabled={pending}>
-            {pending && (
-              <LucideLoaderCircle className="animate-spin mr-2 h-4 w-4" />
-            )}
-            {ticket ? "Update Ticket" : "Create Ticket"}
-          </Button>
+          <SubmitButton
+            label={ticket ? "Update Ticket" : "Create Ticket"}
+            pending={pending}
+          />
         </Field>
       </FieldGroup>
     </Form>
