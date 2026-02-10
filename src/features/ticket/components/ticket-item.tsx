@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getSession } from "@/features/auth/queries/get-session";
 import { Prisma } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { ticketEditPath, ticketPath } from "@/paths";
@@ -23,7 +24,10 @@ type TicketItemProps = {
   isDetail?: boolean;
 };
 
-const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
+const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
+  const session = await getSession();
+  const isTicketOwner = session?.user.id === ticket.userId;
+
   const detailButton = (
     <Button asChild variant="outline" size="icon">
       <Link prefetch href={ticketPath(ticket.id)}>
@@ -32,15 +36,17 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
     </Button>
   );
 
-  const editButton = (
+  const editButton = isTicketOwner ? (
     <Button asChild variant="outline" size="icon">
       <Link prefetch href={ticketEditPath(ticket.id)}>
         <LucidePen />
       </Link>
     </Button>
-  );
+  ) : null;
 
-  const moreMenuButton = <TicketMoreMenu ticket={ticket} />;
+  const moreMenuButton = isTicketOwner ? (
+    <TicketMoreMenu ticket={ticket} />
+  ) : null;
 
   return (
     <div
