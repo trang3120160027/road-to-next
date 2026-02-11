@@ -11,7 +11,7 @@ import { ThemeSwitcher } from "./theme/theme-switcher";
 import { SidebarTrigger } from "./ui/sidebar";
 
 const Header = () => {
-  const [session, isPending] = useSession();
+  const { session, isPending } = useSession();
 
   if (isPending) {
     return null;

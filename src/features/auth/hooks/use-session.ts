@@ -1,8 +1,9 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { cache } from "react";
 import { authClient, Session } from "@/lib/auth-client";
 
-const useSession = () => {
+const useSession = cache(() => {
   const pathName = usePathname();
   const [session, setSession] = useState<Session | null>(null);
   const [isPending, setIsPending] = useState(true);
@@ -18,7 +19,7 @@ const useSession = () => {
     fetchSession();
   }, [pathName]);
 
-  return [session, isPending];
-};
+  return { session, isPending };
+});
 
 export { useSession };

@@ -7,6 +7,7 @@
 @theme inline {
   --animate-fade-in-from-top: fade-in-from-top 0.4s ease-in-out both;
   --animate-header-from-top: header-from-top 0.4s ease-in-out both;
+  --animate-sidebar-from-left: sidebar-from-left 0.4s ease-in-out both;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -68,6 +69,17 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes sidebar-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
