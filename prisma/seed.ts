@@ -14,11 +14,13 @@ const users = [
     email: "admin@admin.com",
     name: "admin",
     password: "12345678",
+    image: "https://avatars.githubusercontent.com/u/124599?v=4",
   },
   {
     email: "na851998@gmail.com",
     name: "Nam Anh",
     password: "12345678",
+    image: "https://avatars.githubusercontent.com/u/124599?v=4",
   },
 ];
 
@@ -36,6 +38,7 @@ export async function seed() {
         name: user.name,
         email: user.email,
         password: user.password,
+        image: user.image,
       },
     });
 
