@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { setCookieByKey } from "@/actions/cookies";
 import { auth } from "@/lib/auth";
-import { ticketsPath } from "@/paths";
+import { homePath, signInPath } from "@/paths";
 import { getSessionOrRedirect } from "../queries/get-session-or-redirect";
 
 const signOut = async () => {
@@ -22,11 +22,11 @@ const signOut = async () => {
       "Error signing out. Please try again.",
     );
     console.error("Error signing out:", error);
-    redirect(ticketsPath());
+    redirect(homePath());
   }
 
   await setCookieByKey("toastMessage", "Signed out successfully.");
-  redirect(ticketsPath());
+  redirect(signInPath());
 };
 
 export { signOut };
