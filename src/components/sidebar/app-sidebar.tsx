@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/features/auth/hooks/use-session";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { AccountDropdown } from "../account-dropdown";
 import {
   Sidebar,
   SidebarContent,
@@ -66,23 +66,7 @@ const AppSidebar = () => {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg">
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src={session.user.image || undefined}
-                  alt={session.user.name}
-                />
-                <AvatarFallback className="rounded-lg">
-                  {session.user.name.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
-                  {session.user.name}
-                </span>
-                <span className="truncate text-xs">{session.user.email}</span>
-              </div>
-            </SidebarMenuButton>
+            <AccountDropdown user={session.user} side="right" />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
