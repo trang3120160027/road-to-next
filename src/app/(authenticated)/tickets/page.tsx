@@ -5,11 +5,17 @@ import { Spinner } from "@/components/spinner";
 import { getSession } from "@/features/auth/queries/get-session";
 import { TicketList } from "@/features/ticket/components/ticket-list";
 import { TicketUpsertForm } from "@/features/ticket/components/ticket-upsert-form";
+import { SearchParams } from "@/features/ticket/types";
 import { getBaseUrl } from "@/utils/url";
 
-const TicketsPage = async () => {
+type TicketsPageProps = {
+  searchParams: Promise<SearchParams>;
+};
+
+const TicketsPage = async ({ searchParams }: TicketsPageProps) => {
   console.log(getBaseUrl());
   const session = await getSession();
+  const resolvedSearchParams = await searchParams;
 
   return (
     <div className="flex-1 flex flex-col gap-8">
@@ -26,7 +32,10 @@ const TicketsPage = async () => {
       />
 
       <Suspense fallback={<Spinner />}>
-        <TicketList userId={session?.user.id} />
+        <TicketList
+          userId={session?.user.id}
+          searchParams={resolvedSearchParams}
+        />
       </Suspense>
     </div>
   );
