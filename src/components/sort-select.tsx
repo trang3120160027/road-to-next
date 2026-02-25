@@ -1,7 +1,7 @@
 "use client";
 
-import { useQueryState } from "nuqs";
-import { sortParser } from "@/features/ticket/types";
+import { useQueryStates } from "nuqs";
+import { sortOptions, sortParser } from "@/features/ticket/types";
 import {
   Select,
   SelectContent,
@@ -11,7 +11,8 @@ import {
 } from "./ui/select";
 
 type Option = {
-  value: string;
+  sortKey: string;
+  sortValue: string;
   label: string;
 };
 
@@ -20,20 +21,23 @@ type SortSelectProps = {
 };
 
 const SortSelect = ({ options }: SortSelectProps) => {
-  const [sort, setSort] = useQueryState("sort", sortParser);
+  const [sort, setSort] = useQueryStates(sortParser, sortOptions);
 
-  const handleSort = (query: string) => {
-    setSort(query);
+  const handleSort = (sortKey: string) => {
+    setSort({
+      sortKey,
+      sortValue: options.find((o) => o.sortKey === sortKey)?.sortValue,
+    });
   };
 
   return (
-    <Select defaultValue={sort} onValueChange={handleSort}>
+    <Select defaultValue={sort.sortKey} onValueChange={handleSort}>
       <SelectTrigger className="w-full">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
+          <SelectItem key={option.sortKey} value={option.sortKey}>
             {option.label}
           </SelectItem>
         ))}
