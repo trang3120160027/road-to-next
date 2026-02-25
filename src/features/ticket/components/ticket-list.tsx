@@ -1,12 +1,12 @@
 import { SearchInput } from "@/components/search-input";
 import { SortSelect } from "@/components/sort-select";
 import { getTickets } from "../queries/get-tickets";
-import { SearchParams } from "../types";
+import { ParsedSearchParams } from "../types";
 import { TicketItem } from "./ticket-item";
 
 type TicketListProps = {
   userId?: string;
-  searchParams: SearchParams;
+  searchParams: ParsedSearchParams;
 };
 
 const TicketList = async ({ userId, searchParams }: TicketListProps) => {
@@ -16,7 +16,6 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
       <div className="max-w-md w-full mb-4 flex gap-2">
         <SearchInput placeholder="Search tickets..." />
         <SortSelect
-          defaultValue="newest"
           options={[
             { value: "newest", label: "Newest" },
             { value: "bounty", label: "Bounty" },
