@@ -2,7 +2,12 @@
 
 import { useQueryStates } from "nuqs";
 import { SortSelect, SortSelectOption } from "@/components/sort-select";
-import { sortOptions, sortParser } from "../types";
+import {
+  paginationOptions,
+  paginationParser,
+  sortOptions,
+  sortParser,
+} from "../types";
 
 type TicketSortSelectProps = {
   options: SortSelectOption[];
@@ -10,6 +15,7 @@ type TicketSortSelectProps = {
 
 const TicketSortSelect = ({ options }: TicketSortSelectProps) => {
   const [sort, setSort] = useQueryStates(sortParser, sortOptions);
+  const [, setPagination] = useQueryStates(paginationParser, paginationOptions);
 
   const handleSort = (compositeKey: string) => {
     const [sortKey, sortValue] = compositeKey.split("_");
@@ -18,6 +24,7 @@ const TicketSortSelect = ({ options }: TicketSortSelectProps) => {
       sortKey,
       sortValue,
     });
+    setPagination({ page: 1 });
   };
 
   return <SortSelect options={options} onChange={handleSort} value={sort} />;

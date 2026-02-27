@@ -1,9 +1,13 @@
 "use client";
 
-import { useQueryState } from "nuqs";
+import { useQueryState, useQueryStates } from "nuqs";
 import { useDebouncedCallback } from "use-debounce";
 import { SearchInput } from "@/components/search-input";
-import { searchParser } from "@/features/ticket/types";
+import {
+  paginationOptions,
+  paginationParser,
+  searchParser,
+} from "@/features/ticket/types";
 
 type TicketSearchInputProps = {
   placeholder: string;
@@ -11,9 +15,11 @@ type TicketSearchInputProps = {
 
 const TicketSearchInput = ({ placeholder }: TicketSearchInputProps) => {
   const [search, setSearch] = useQueryState("search", searchParser);
+  const [, setPagination] = useQueryStates(paginationParser, paginationOptions);
 
   const handleSearch = useDebouncedCallback((query: string) => {
     setSearch(query);
+    setPagination({ page: 1 });
   }, 300);
 
   return (
