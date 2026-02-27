@@ -16,7 +16,7 @@ const getTickets = async (
   const take = searchParams.limit;
   const skip = (searchParams.page - 1) * searchParams.limit;
 
-  const [tickets, totalResults] = await prisma.$transaction([
+  const [tickets, count] = await prisma.$transaction([
     // Query A: Get the specific page of data
     prisma.ticket.findMany({
       where: where,
@@ -39,8 +39,11 @@ const getTickets = async (
   ]);
 
   return {
-    tickets,
-    totalResults,
+    list: tickets,
+    metadata: {
+      count,
+      hasNextPage: skip + take < count,
+    },
   };
 };
 

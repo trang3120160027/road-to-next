@@ -20,10 +20,13 @@ import {
 import { paginationOptions, paginationParser } from "../types";
 
 type TicketPaginationProps = {
-  totalResults: number;
+  metadata: {
+    count: number;
+    hasNextPage: boolean;
+  };
 };
 
-const TicketPagination = ({ totalResults }: TicketPaginationProps) => {
+const TicketPagination = ({ metadata }: TicketPaginationProps) => {
   const [pagination, setPagination] = useQueryStates(
     paginationParser,
     paginationOptions,
@@ -32,6 +35,7 @@ const TicketPagination = ({ totalResults }: TicketPaginationProps) => {
   const limitSelectOptions = [2, 4, 6];
   const { page, limit } = pagination;
 
+  const totalResults = metadata.count;
   const totalPages = Math.ceil(totalResults / limit);
   const startResult = totalResults === 0 ? 0 : (page - 1) * limit + 1;
   const endResult = Math.min(page * limit, totalResults);

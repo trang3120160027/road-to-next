@@ -11,7 +11,10 @@ type TicketListProps = {
 };
 
 const TicketList = async ({ userId, searchParams }: TicketListProps) => {
-  const { tickets, totalResults } = await getTickets(userId, searchParams);
+  const { list: tickets, metadata: ticketMetadata } = await getTickets(
+    userId,
+    searchParams,
+  );
   return (
     <div className="flex-1 flex flex-col gap-4 animate-fade-in-from-top items-center">
       <div className="max-w-md w-full mb-4 flex gap-2">
@@ -31,7 +34,7 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
           {tickets.map((ticket) => (
             <TicketItem key={ticket.id} ticket={ticket} />
           ))}
-          <TicketPagination totalResults={totalResults} />
+          <TicketPagination metadata={ticketMetadata} />
         </>
       ) : (
         <p className="text-muted-foreground">No tickets found</p>
