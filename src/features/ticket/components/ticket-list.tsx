@@ -1,6 +1,7 @@
 import { getTickets } from "../queries/get-tickets";
 import { ParsedSearchParams } from "../types";
 import { TicketItem } from "./ticket-item";
+import { TicketPagination } from "./ticket-pagination";
 import { TicketSearchInput } from "./ticket-search-input";
 import { TicketSortSelect } from "./ticket-sort-select";
 
@@ -10,9 +11,9 @@ type TicketListProps = {
 };
 
 const TicketList = async ({ userId, searchParams }: TicketListProps) => {
-  const tickets = await getTickets(userId, searchParams);
+  const { tickets, totalResults } = await getTickets(userId, searchParams);
   return (
-    <div className="flex-1 flex flex-col gap-2 animate-fade-in-from-top items-center">
+    <div className="flex-1 flex flex-col gap-4 animate-fade-in-from-top items-center">
       <div className="max-w-md w-full mb-4 flex gap-2">
         <TicketSearchInput placeholder="Search tickets..." />
         <TicketSortSelect
@@ -26,7 +27,12 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
       </div>
 
       {tickets.length ? (
-        tickets.map((ticket) => <TicketItem key={ticket.id} ticket={ticket} />)
+        <>
+          {tickets.map((ticket) => (
+            <TicketItem key={ticket.id} ticket={ticket} />
+          ))}
+          <TicketPagination totalResults={totalResults} />
+        </>
       ) : (
         <p className="text-muted-foreground">No tickets found</p>
       )}
