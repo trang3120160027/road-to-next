@@ -28,6 +28,8 @@ export async function seed() {
   const t0 = performance.now();
   console.log("Start seeding...");
 
+  await prisma.comment.deleteMany();
+  await prisma.ticket.deleteMany();
   await prisma.user.deleteMany();
 
   const createdUsers = [];
@@ -78,9 +80,38 @@ export async function seed() {
       },
     ];
 
-    await prisma.ticket.createMany({
+    const createdTickets = await prisma.ticket.createManyAndReturn({
       data: tickets,
     });
+
+    if (createdTickets.length > 0) {
+      const comments: Prisma.CommentCreateManyInput[] = [
+        {
+          content: "This is a critical issue, we need to fix it ASAP.",
+          ticketId: createdTickets[0].id,
+          userId: createdUsers[1].id,
+        },
+        {
+          content: "I can reproduce this bug on Chrome and Firefox.",
+          ticketId: createdTickets[0].id,
+          userId: createdUsers[0].id,
+        },
+        {
+          content: "Working on it, should have a fix by end of day.",
+          ticketId: createdTickets[1].id,
+          userId: createdUsers[0].id,
+        },
+        {
+          content: "Multi-language support has been shipped in v2.0.",
+          ticketId: createdTickets[2].id,
+          userId: createdUsers[1].id,
+        },
+      ];
+
+      await prisma.comment.createMany({
+        data: comments,
+      });
+    }
   }
 
   const t1 = performance.now();
