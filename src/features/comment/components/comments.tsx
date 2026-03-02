@@ -1,16 +1,16 @@
 import { getSession } from "@/features/auth/queries/get-session";
 import { isOwner } from "@/features/auth/utils/is-owner";
-import { getComments } from "../queries/get-comments";
+import { CommentWithMeta } from "../types";
 import { CommentCreateForm } from "./comment-create-form";
 import { CommentDeleteButton } from "./comment-delete-button";
 import { CommentItem } from "./comment-item";
 
 type CommentsProps = {
   ticketId: string;
+  comments?: CommentWithMeta[];
 };
 
-const Comments = async ({ ticketId }: CommentsProps) => {
-  const comments = await getComments(ticketId);
+const Comments = async ({ ticketId, comments = [] }: CommentsProps) => {
   const session = await getSession();
 
   return (

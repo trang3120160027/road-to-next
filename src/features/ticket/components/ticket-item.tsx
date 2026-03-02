@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { getSession } from "@/features/auth/queries/get-session";
 import { Comments } from "@/features/comment/components/comments";
+import { CommentWithMeta } from "@/features/comment/types";
 import { Prisma } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { ticketEditPath, ticketPath } from "@/paths";
@@ -23,9 +24,10 @@ type TicketItemProps = {
     include: { user: { select: { name: true } } };
   }>;
   isDetail?: boolean;
+  comments?: CommentWithMeta[];
 };
 
-const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
+const TicketItem = async ({ ticket, isDetail, comments }: TicketItemProps) => {
   const session = await getSession();
   const isTicketOwner = session?.user.id === ticket.userId;
 
@@ -95,7 +97,7 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
         </div>
       </div>
 
-      {isDetail && <Comments ticketId={ticket.id} />}
+      {isDetail && <Comments ticketId={ticket.id} comments={comments} />}
     </div>
   );
 };
