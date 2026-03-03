@@ -1,5 +1,3 @@
-import { getSession } from "@/features/auth/queries/get-session";
-import { isOwner } from "@/features/auth/utils/is-owner";
 import { CommentWithMeta } from "../types";
 import { CommentCreateForm } from "./comment-create-form";
 import { CommentDeleteButton } from "./comment-delete-button";
@@ -11,8 +9,6 @@ type CommentsProps = {
 };
 
 const Comments = async ({ ticketId, comments = [] }: CommentsProps) => {
-  const session = await getSession();
-
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-lg font-semibold">Comments</h2>
@@ -24,7 +20,7 @@ const Comments = async ({ ticketId, comments = [] }: CommentsProps) => {
               key={comment.id}
               comment={comment}
               buttons={[
-                ...(isOwner(session?.user, comment)
+                ...(comment.isOwner
                   ? [<CommentDeleteButton key="delete" id={comment.id} />]
                   : []),
               ]}

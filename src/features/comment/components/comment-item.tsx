@@ -19,7 +19,9 @@ const CommentItem = ({ comment, buttons }: CommentItemProps) => {
         <Card key={comment.id} className="flex-1">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>{comment.user?.name ?? "Anonymous"}</span>
+              <span>
+                {comment.isOwner ? "You" : (comment.user?.name ?? "Anonymous")}
+              </span>
             </CardTitle>
             <CardDescription>
               {comment.createdAt.toLocaleString()}
