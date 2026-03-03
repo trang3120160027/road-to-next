@@ -6,6 +6,7 @@ export type ActionState<T> = {
   message: string;
   success: boolean;
   timestamp: number;
+  data?: unknown;
 };
 
 export const EMPTY_ACTION_STATE = {
@@ -49,11 +50,13 @@ export const fromErrorToActionState = <T>(
 export const toActionState = <T>(
   success: boolean,
   message: string,
+  data?: unknown,
 ): ActionState<T> => {
   return {
     message,
     errors: null,
     success,
     timestamp: Date.now(),
+    data,
   };
 };

@@ -26,12 +26,16 @@ const createComment = async (
     return fromErrorToActionState<CreateCommentInput>(result.error, values);
   }
 
+  let comment;
   try {
-    await prisma.comment.create({
+    comment = await prisma.comment.create({
       data: {
         content: result.data.content,
         userId: session.user.id,
         ticketId,
+      },
+      include: {
+        user: { select: { name: true } },
       },
     });
   } catch (error) {
@@ -39,7 +43,10 @@ const createComment = async (
   }
 
   revalidatePath(ticketPath(ticketId));
-  return toActionState<CreateCommentInput>(true, "Comment created");
+  return toActionState<CreateCommentInput>(true, "Comment created", {
+    ...comment,
+    isOwner: true,
+  });
 };
 
 export { createComment };

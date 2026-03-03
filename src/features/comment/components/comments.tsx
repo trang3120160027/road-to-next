@@ -43,10 +43,18 @@ const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
     );
   };
 
+  const handleAddComment = (newComment: CommentWithMeta) => {
+    setComments((prevComments) => [newComment, ...prevComments]);
+    setMetadata((prevMetadata) => ({
+      ...prevMetadata,
+      count: prevMetadata.count + 1,
+    }));
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-lg font-semibold">Comments</h2>
-      <CommentCreateForm ticketId={ticketId} />
+      <CommentCreateForm ticketId={ticketId} onAddComment={handleAddComment} />
       <div className="flex flex-col gap-4">
         {comments.length > 0 ? (
           comments.map((comment) => (

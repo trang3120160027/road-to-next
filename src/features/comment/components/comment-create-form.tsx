@@ -13,19 +13,25 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createComment } from "../actions/create-comment";
+import { CommentWithMeta } from "../types";
 
 type CommentCreateFormProps = {
   ticketId: string;
+  onAddComment?: (comment: CommentWithMeta) => void;
 };
 
-const CommentCreateForm = ({ ticketId }: CommentCreateFormProps) => {
+const CommentCreateForm = ({ ticketId, onAddComment }: CommentCreateFormProps) => {
   const [actionState, formAction, pending] = useActionState(
     createComment.bind(null, ticketId),
     EMPTY_ACTION_STATE,
   );
 
   return (
-    <Form actionState={actionState} action={formAction}>
+    <Form
+      actionState={actionState}
+      action={formAction}
+      onSuccess={(state) => onAddComment?.(state.data as CommentWithMeta)}
+    >
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="content">Add a comment</FieldLabel>
