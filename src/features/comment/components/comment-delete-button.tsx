@@ -7,9 +7,13 @@ import { deleteComment } from "../actions/delete-comment";
 
 type CommentDeleteButtonProps = {
   id: string;
+  onDeleteComment?: (commentId: string) => void;
 };
 
-const CommentDeleteButton = ({ id }: CommentDeleteButtonProps) => {
+const CommentDeleteButton = ({
+  id,
+  onDeleteComment,
+}: CommentDeleteButtonProps) => {
   const [deleteButton, deleteDialog] = useConfirmDialog({
     title: "Delete Comment",
     description:
@@ -25,6 +29,7 @@ const CommentDeleteButton = ({ id }: CommentDeleteButtonProps) => {
         <span className="sr-only">Delete comment</span>
       </Button>
     ),
+    onSuccess: () => onDeleteComment?.(id),
   });
 
   return (

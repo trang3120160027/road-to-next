@@ -20,6 +20,7 @@ type UseConfirmDialogProps = {
   description: string;
   action: () => Promise<ActionState<unknown>>;
   trigger: React.ReactElement;
+  onSuccess?: () => void;
 };
 
 const useConfirmDialog = ({
@@ -27,6 +28,7 @@ const useConfirmDialog = ({
   description,
   action,
   trigger,
+  onSuccess,
 }: UseConfirmDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [actionState, formAction, pending] = useActionState(
@@ -51,7 +53,10 @@ const useConfirmDialog = ({
           <Form
             action={formAction}
             actionState={actionState}
-            onSuccess={() => setIsOpen(false)}
+            onSuccess={() => {
+              setIsOpen(false);
+              onSuccess?.();
+            }}
           >
             <Button variant="destructive" type="submit" disabled={pending}>
               {pending && (
