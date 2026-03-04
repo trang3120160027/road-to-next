@@ -1,11 +1,18 @@
 "use client";
 
 import { LucideLoader2 } from "lucide-react";
-import { cloneElement, useActionState, useState } from "react";
-import { ActionState, EMPTY_ACTION_STATE } from "./form";
-import { Form } from "./form/form";
+import {
+  cloneElement,
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { toast } from "sonner";
+import { ActionState, EMPTY_ACTION_STATE, useActionFeedback } from "./form";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -13,7 +20,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
-import { Button } from "./ui/button";
 
 type UseConfirmDialogProps = {
   title: string;
@@ -36,6 +42,38 @@ const useConfirmDialog = ({
     EMPTY_ACTION_STATE,
   );
 
+  const loadingToastId = useRef<string | number | undefined>(undefined);
+
+  useEffect(() => {
+    if (pending) {
+      loadingToastId.current = toast.loading("Deleting...");
+    } else if (loadingToastId.current) {
+      toast.dismiss(loadingToastId.current);
+    }
+
+    return () => {
+      if (loadingToastId.current) {
+        toast.dismiss(loadingToastId.current);
+      }
+    };
+  }, [pending]);
+
+  useActionFeedback({
+    actionState,
+    onSuccess: ({ actionState }) => {
+      if (actionState.message) {
+        toast.success(actionState.message);
+      }
+
+      onSuccess?.();
+    },
+    onError: ({ actionState }) => {
+      if (actionState.message) {
+        toast.error(actionState.message);
+      }
+    },
+  });
+
   const dialogTrigger = cloneElement(trigger, {
     onClick: () => setIsOpen((state) => !state),
   } as React.HTMLAttributes<HTMLElement>);
@@ -50,15 +88,12 @@ const useConfirmDialog = ({
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <Form
-            action={formAction}
-            actionState={actionState}
-            onSuccess={() => {
-              setIsOpen(false);
-              onSuccess?.();
-            }}
-          >
-            <Button variant="destructive" type="submit" disabled={pending}>
+          <form action={formAction}>
+            <AlertDialogAction
+              variant="destructive"
+              type="submit"
+              disabled={pending}
+            >
               {pending && (
                 <div className="absolute flex items-center justify-center">
                   <LucideLoader2 className="animate-spin h-4 w-4" />
@@ -66,8 +101,8 @@ const useConfirmDialog = ({
               )}
 
               <span className={pending ? "opacity-0" : ""}>Confirm</span>
-            </Button>
-          </Form>
+            </AlertDialogAction>
+          </form>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
