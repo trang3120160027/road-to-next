@@ -14,8 +14,8 @@ type CommentsProps = {
   paginatedComments: {
     list: CommentWithMeta[];
     metadata: {
-      count: number;
       hasNextPage: boolean;
+      nextCursor: string | null;
     };
   };
 };
@@ -29,7 +29,10 @@ const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
     if (!metadata.hasNextPage) return;
     setLoading(true);
 
-    const morePaginatedComments = await getComments(ticketId, comments.length);
+    const morePaginatedComments = await getComments(
+      ticketId,
+      metadata.nextCursor ?? undefined,
+    );
     const moreComments = morePaginatedComments.list;
 
     setComments([...comments, ...moreComments]);
@@ -45,10 +48,6 @@ const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
 
   const handleAddComment = (newComment: CommentWithMeta) => {
     setComments((prevComments) => [newComment, ...prevComments]);
-    setMetadata((prevMetadata) => ({
-      ...prevMetadata,
-      count: prevMetadata.count + 1,
-    }));
   };
 
   return (
