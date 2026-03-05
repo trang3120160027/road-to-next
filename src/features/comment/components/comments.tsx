@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { LucideLoader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useInView } from "react-intersection-observer";
 import { getComments } from "../queries/get-comments";
 import { CommentWithMeta } from "../types";
 import { CommentCreateForm } from "./comment-create-form";
@@ -20,6 +20,12 @@ const getCommentsQueryKey = (ticketId: string) => ["comments", ticketId];
 
 const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
   const queryClient = useQueryClient();
+
+  const { ref: sentinelRef } = useInView({
+    onChange(inView) {
+      if (inView && hasNextPage && !isFetchingNextPage) fetchNextPage();
+    },
+  });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
@@ -88,17 +94,11 @@ const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
         )}
       </div>
       {hasNextPage && (
-        <Button
-          variant="ghost"
-          disabled={isFetchingNextPage}
-          onClick={() => fetchNextPage()}
-        >
-          {isFetchingNextPage ? (
-            <LucideLoader2 className="animate-spin" />
-          ) : (
-            "Load more"
+        <div ref={sentinelRef} className="flex justify-center py-2">
+          {isFetchingNextPage && (
+            <LucideLoader2 className="animate-spin text-muted-foreground" />
           )}
-        </Button>
+        </div>
       )}
     </div>
   );
