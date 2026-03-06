@@ -4,7 +4,7 @@ export const getBaseUrl = () => {
   const baseUrl =
     environment === "development"
       ? "http://localhost:3000"
-      : `https://${process.env.BETTER_AUTH_URL}`;
+      : `${process.env.BETTER_AUTH_URL}`;
 
   return baseUrl;
 };
