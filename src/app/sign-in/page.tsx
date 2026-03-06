@@ -15,13 +15,13 @@ const SignInPage = () => {
           <div className="flex-1 flex justify-between">
             <div>
               No account yet?{" "}
-              <Link href={signUpPath()} className="hover:underline">
+              <Link href={signUpPath()} className="underline">
                 Sign Up
               </Link>
             </div>
 
             <div>
-              <Link href={passwordForgotPath()} className="hover:underline">
+              <Link href={passwordForgotPath()} className="underline">
                 Forgot Password?
               </Link>
             </div>

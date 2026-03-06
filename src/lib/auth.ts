@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import prisma from "./prisma";
+import { resend } from "./resend";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -9,6 +10,19 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      await resend.emails.send({
+        from: "Anders Tran <security@mail.anderstran.me>",
+        to: user.email,
+        subject: "Reset your password",
+        html: `
+          <p>Hi ${user.name ?? user.email},</p>
+          <p>Click the link below to reset your password. This link expires in 1 hour.</p>
+          <p><a href="${url}">Reset Password</a></p>
+          <p>If you did not request a password reset, you can safely ignore this email.</p>
+        `,
+      });
+    },
   },
   socialProviders: {
     github: {
