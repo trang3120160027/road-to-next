@@ -7,7 +7,7 @@ import {
   paginationOptions,
   paginationParser,
   searchParser,
-} from "@/features/ticket/types";
+} from "@/utils/search-params";
 
 type TicketSearchInputProps = {
   placeholder: string;

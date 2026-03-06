@@ -7,7 +7,7 @@ import {
   paginationParser,
   sortOptions,
   sortParser,
-} from "../types";
+} from "@/utils/search-params";
 
 type TicketSortSelectProps = {
   options: SortSelectOption[];

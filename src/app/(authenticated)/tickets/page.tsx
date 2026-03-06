@@ -6,7 +6,7 @@ import { Spinner } from "@/components/spinner";
 import { getSession } from "@/features/auth/queries/get-session";
 import { TicketList } from "@/features/ticket/components/ticket-list";
 import { TicketUpsertForm } from "@/features/ticket/components/ticket-upsert-form";
-import { searchParamsCache } from "@/features/ticket/types";
+import { searchParamsCache } from "@/utils/search-params";
 import { getBaseUrl } from "@/utils/url";
 
 type TicketsPageProps = {

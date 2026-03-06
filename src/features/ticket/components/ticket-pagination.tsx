@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { paginationOptions, paginationParser } from "../types";
+import { paginationOptions, paginationParser } from "@/utils/search-params";
 
 type TicketPaginationProps = {
   metadata: {

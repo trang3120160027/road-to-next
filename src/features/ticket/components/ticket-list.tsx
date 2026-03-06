@@ -1,5 +1,5 @@
+import { ParsedSearchParams } from "@/utils/search-params";
 import { getTickets } from "../queries/get-tickets";
-import { ParsedSearchParams } from "../types";
 import { TicketItem } from "./ticket-item";
 import { TicketPagination } from "./ticket-pagination";
 import { TicketSearchInput } from "./ticket-search-input";
