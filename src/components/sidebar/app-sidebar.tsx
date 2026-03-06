@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/features/auth/hooks/use-session";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { AccountDropdown } from "../account-dropdown";
 import {
   Sidebar,
@@ -23,6 +24,7 @@ import { navItems } from "./constants";
 const AppSidebar = () => {
   const { session, isPending } = useSession();
   const pathname = usePathname();
+  const isMobile = useIsMobile();
 
   if (isPending || !session) {
     return null;
@@ -66,7 +68,10 @@ const AppSidebar = () => {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <AccountDropdown user={session.user} side="right" />
+            <AccountDropdown
+              user={session.user}
+              side={isMobile ? "top" : "right"}
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

@@ -86,9 +86,9 @@ const useConfirmDialog = ({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <form action={formAction}>
+        <form action={formAction}>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               type="submit"
@@ -102,8 +102,8 @@ const useConfirmDialog = ({
 
               <span className={pending ? "opacity-0" : ""}>Confirm</span>
             </AlertDialogAction>
-          </form>
-        </AlertDialogFooter>
+          </AlertDialogFooter>
+        </form>
       </AlertDialogContent>
     </AlertDialog>
   );
